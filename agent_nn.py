@@ -15,6 +15,16 @@ class AgentNN(nn.Module):
             nn.ReLU(),
         )
 
+        if torch.cuda.is_available():
+            self.device = torch.device('cuda')
+            print("Using CUDA device:", torch.cuda.get_device_name(0))
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+            print("MPS device found: mps")
+        else:
+            self.device = torch.device("cpu")
+            print("CUDA nor MPS available, using cpu")
+
         conv_out_size = self._get_conv_out(input_shape)
 
         # Linear layers
@@ -24,13 +34,10 @@ class AgentNN(nn.Module):
             nn.Linear(conv_out_size, 512),
             nn.ReLU(),
             nn.Linear(512, n_actions)
-        )
+        ).to(self.device)
 
         if freeze:
             self._freeze()
-        
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.to(self.device)
 
     def forward(self, x):
         return self.network(x)

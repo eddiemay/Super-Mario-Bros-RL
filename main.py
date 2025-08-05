@@ -1,5 +1,3 @@
-import torch
-
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import RIGHT_ONLY
 
@@ -13,12 +11,6 @@ import os
 from utils import *
 
 model_path = os.path.join("models", get_current_date_time_string())
-os.makedirs(model_path, exist_ok=True)
-
-if torch.cuda.is_available():
-    print("Using CUDA device:", torch.cuda.get_device_name(0))
-else:
-    print("CUDA is not available")
 
 ENV_NAME = 'SuperMarioBros-1-1-v0'
 SHOULD_TRAIN = True
@@ -44,14 +36,14 @@ if not SHOULD_TRAIN:
 env.reset()
 next_state, reward, done, trunc, info = env.step(action=0)
 
-for i in range(NUM_OF_EPISODES):    
+for i in range(1, NUM_OF_EPISODES + 1):
     print("Episode:", i)
     done = False
     state, _ = env.reset()
     total_reward = 0
     while not done:
         a = agent.choose_action(state)
-        new_state, reward, done, truncated, info  = env.step(a)
+        new_state, reward, done, truncated, info = env.step(a)
         total_reward += reward
 
         if SHOULD_TRAIN:
@@ -62,8 +54,9 @@ for i in range(NUM_OF_EPISODES):
 
     print("Total reward:", total_reward, "Epsilon:", agent.epsilon, "Size of replay buffer:", len(agent.replay_buffer), "Learn step counter:", agent.learn_step_counter)
 
-    if SHOULD_TRAIN and (i + 1) % CKPT_SAVE_INTERVAL == 0:
-        agent.save_model(os.path.join(model_path, "model_" + str(i + 1) + "_iter.pt"))
+    if SHOULD_TRAIN and i % CKPT_SAVE_INTERVAL == 0:
+        os.makedirs(model_path, exist_ok=True)
+        agent.save_model(os.path.join(model_path, f"model_{i}_iter.pt"))
 
     print("Total reward:", total_reward)
 
