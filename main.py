@@ -1,26 +1,21 @@
 import gym_super_mario_bros
-from gym_super_mario_bros.actions import RIGHT_ONLY
-
-from agent import Agent
-
-from nes_py.wrappers import JoypadSpace
-from wrappers import apply_wrappers
-
 import os
-
-from utils import *
+import sys
+from agent import Agent
+from wrappers import apply_wrappers
+from utils import get_current_date_time_string
 
 model_path = os.path.join("models", get_current_date_time_string())
 
-ENV_NAME = 'SuperMarioBros-1-1-v0'
+ENV_NAME = 'SuperMarioBros-v0'
 SHOULD_TRAIN = True
 DISPLAY = True
-CKPT_SAVE_INTERVAL = 5000
+CKPT_SAVE_INTERVAL = 1000
 NUM_OF_EPISODES = 50_000
 
-env = gym_super_mario_bros.make(ENV_NAME, render_mode='human' if DISPLAY else 'rgb', apply_api_compatibility=True)
-env = JoypadSpace(env, RIGHT_ONLY)
+env_name = sys.argv[1] if len(sys.argv) > 1 else ENV_NAME
 
+env = gym_super_mario_bros.make(env_name, render_mode='human' if DISPLAY else 'rgb', apply_api_compatibility=True)
 env = apply_wrappers(env)
 
 agent = Agent(input_dims=env.observation_space.shape, num_actions=env.action_space.n)
