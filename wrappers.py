@@ -1,7 +1,6 @@
 from gym import Wrapper
 from gym.wrappers import GrayScaleObservation, ResizeObservation, FrameStack
-from nes_py.wrappers import JoypadSpace
-from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
+
 
 
 class SkipFrame(Wrapper):
@@ -21,7 +20,6 @@ class SkipFrame(Wrapper):
     
 
 def apply_wrappers(env):
-    env = JoypadSpace(env, COMPLEX_MOVEMENT)
     env = SkipFrame(env, skip=4) # Num of frames to apply one action to
     env = ResizeObservation(env, shape=84) # Resize frame from 240x256 to 84x84
     env = GrayScaleObservation(env)
