@@ -5,8 +5,6 @@ from agent import Agent
 from wrappers import apply_wrappers
 from utils import get_current_date_time_string
 
-model_path = os.path.join("models", get_current_date_time_string())
-
 ENV_NAME = 'SuperMarioBros-v0'
 SHOULD_TRAIN = True
 DISPLAY = True
@@ -14,6 +12,8 @@ CKPT_SAVE_INTERVAL = 1000
 NUM_OF_EPISODES = 50_000
 
 env_name = sys.argv[1] if len(sys.argv) > 1 else ENV_NAME
+
+model_path = os.path.join("models", f'{env_name}-{get_current_date_time_string()}')
 
 env = gym_super_mario_bros.make(env_name, render_mode='human' if DISPLAY else 'rgb', apply_api_compatibility=True)
 env = apply_wrappers(env)
